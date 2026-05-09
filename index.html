@@ -7,23 +7,16 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Health">
 <meta name="theme-color" content="#070810">
-<title>Health Tracker</title>
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23070810' width='100' height='100' rx='20'/><text y='68' x='50' text-anchor='middle' font-size='55'>🧬</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Prash Health Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #070810;
-  --bg2: #0e1019;
   --card: #141622;
-  --card2: #1a1e2e;
-  --g: #4ade80;
-  --g2: #22c55e;
-  --b: #38bdf8;
-  --o: #f59e0b;
-  --p: #a78bfa;
-  --pk: #fb7185;
-  --lv: #e879f9;
-  --r: #ef4444;
+  --g: #4ade80; /* Green - Must Do */
+  --b: #38bdf8; /* Blue - Optional/Backup */
+  --o: #f59e0b; /* Orange - Timing */
+  --r: #ef4444; /* Red - Overdue */
   --t: #e2e8f0;
   --t2: #94a3b8;
   --t3: #4a5270;
@@ -32,181 +25,40 @@
   --safe-bot: env(safe-area-inset-bottom, 0px);
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body {
-  font-family: 'Outfit', sans-serif;
-  background: var(--bg);
-  color: var(--t);
-  overflow-x: hidden;
-  -webkit-user-select: none;
-  user-select: none;
-}
-.mono { font-family: 'JetBrains Mono', monospace; }
-
-/* Scroll container */
-#app {
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding-top: var(--safe-top);
-  padding-bottom: calc(70px + var(--safe-bot));
-}
+body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--t); user-select: none; }
+#app { padding-top: var(--safe-top); padding-bottom: calc(70px + var(--safe-bot)); min-height: 100vh; }
 
 /* Header */
-.hdr {
-  position: sticky; top: 0; z-index: 50;
-  background: var(--bg);
-  padding: 12px 16px 0;
-  border-bottom: 1px solid var(--bdr);
-}
-.hdr-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-.hdr-date { font-size:11px; color:var(--t2); letter-spacing:2px; text-transform:uppercase; font-weight:500; }
-.hdr-pct { font-size:22px; font-weight:800; color:var(--g); margin-top:1px; }
-.hdr-stats { display:flex; gap:5px; }
-.hdr-stat {
-  text-align:center; background:var(--card); border-radius:10px;
-  padding:5px 10px; min-width:50px;
-}
-.hdr-stat-num { font-size:14px; font-weight:700; }
-.hdr-stat-lbl { font-size:8px; color:var(--t2); letter-spacing:0.5px; text-transform:uppercase; }
-.prog-bar { height:3px; background:var(--card); border-radius:2px; margin-bottom:8px; overflow:hidden; }
-.prog-fill { height:100%; border-radius:2px; transition:width 0.5s cubic-bezier(0.4,0,0.2,1); }
+.hdr { position: sticky; top: 0; z-index: 50; background: var(--bg); padding: 16px 16px 8px; border-bottom: 1px solid var(--bdr); }
+.hdr-top { display:flex; justify-content:space-between; align-items:center; }
+.hdr-pct { font-size:24px; font-weight:800; color:var(--g); }
+.prog-bar { height:4px; background:var(--card); border-radius:2px; margin-top:8px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--g); transition:width 0.4s ease; }
 
-/* Bottom nav */
-.bnav {
-  position:fixed; bottom:0; left:0; right:0; z-index:100;
-  background: var(--bg); border-top:1px solid var(--bdr);
-  display:flex; padding:6px 0 calc(6px + var(--safe-bot));
-}
-.bnav-btn {
-  flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
-  padding:6px 0; border:none; background:none; color:var(--t3);
-  font-family:'Outfit',sans-serif; font-size:9px; font-weight:600;
-  letter-spacing:0.5px; cursor:pointer; transition:color 0.2s;
-}
+/* Task Styling */
+.task { display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid #111420; cursor:pointer; align-items: flex-start; }
+.task.done { opacity:0.3; }
+.chk { width:24px; height:24px; border-radius:50%; border:2px solid var(--t3); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; margin-top:2px; }
+.task.done .chk { border-color:var(--g); background:var(--g); color:var(--bg); }
+.task-body { flex:1; }
+.task-meta { display:flex; gap:6px; margin-bottom:4px; align-items:center; }
+.time-tag { font-family:'JetBrains Mono'; font-size:10px; color:var(--o); font-weight:700; }
+.priority-tag { font-size:9px; padding:2px 6px; border-radius:4px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; }
+.must { background: #4ade8020; color: var(--g); }
+.opt { background: #38bdf820; color: var(--b); }
+.task-title { font-size:15px; font-weight:600; line-height:1.2; }
+.task-sub { font-size:11px; color:var(--t2); margin-top:3px; }
+
+/* Nav */
+.bnav { position:fixed; bottom:0; width:100%; background:var(--bg); border-top:1px solid var(--bdr); display:flex; padding-bottom:var(--safe-bot); }
+.bnav-btn { flex:1; padding:12px; border:none; background:none; color:var(--t3); font-size:10px; font-weight:700; text-align:center; }
 .bnav-btn.act { color:var(--g); }
-.bnav-btn span { font-size:20px; }
-
-/* Views */
-.view { display:none; padding:8px 16px 16px; }
+.view { display:none; }
 .view.act { display:block; }
 
-/* Section label */
-.slbl {
-  font-size:10px; color:var(--t3); letter-spacing:2px;
-  text-transform:uppercase; margin-bottom:12px; font-weight:600;
-}
-
-/* Task items */
-.task {
-  display:flex; gap:10px; align-items:flex-start;
-  padding:10px 0; border-bottom:1px solid #111420;
-  cursor:pointer; transition:opacity 0.25s;
-}
-.task.done { opacity:0.4; }
-.task:active { transform:scale(0.99); }
-.chk {
-  width:22px; height:22px; border-radius:50%; flex-shrink:0; margin-top:1px;
-  border:2px solid var(--t3); display:flex; align-items:center; justify-content:center;
-  transition:all 0.25s; font-size:10px;
-}
-.task.done .chk { border-color:var(--g); background:var(--g)18; color:var(--g); }
-.task-body { flex:1; min-width:0; }
-.task-meta { display:flex; align-items:center; gap:5px; margin-bottom:2px; }
-.task-time { font-size:10px; font-weight:600; color:var(--o); font-family:'JetBrains Mono',monospace; }
-.task-cat {
-  font-size:7px; padding:1px 5px; border-radius:5px;
-  font-weight:700; letter-spacing:0.5px; text-transform:uppercase;
-}
-.task-title { font-size:13px; font-weight:600; transition:all 0.2s; }
-.task.done .task-title { text-decoration:line-through; color:var(--t3); }
-.task-sub { font-size:10.5px; color:var(--t3); margin-top:1px; line-height:1.4; }
-
-/* Overdue pulse */
-.task.overdue .chk { border-color:var(--r); animation:pulse 2s infinite; }
-@keyframes pulse {
-  0%,100% { box-shadow:0 0 0 0 #ef444440; }
-  50% { box-shadow:0 0 0 6px #ef444400; }
-}
-
-/* Water grid */
-.wgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-.wbottle {
-  background:var(--card); border:2px solid var(--bdr); border-radius:14px;
-  padding:14px 8px; text-align:center; cursor:pointer;
-  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-.wbottle.done { background:#38bdf815; border-color:var(--b); transform:scale(0.96); }
-.wbottle-icon { font-size:26px; margin-bottom:4px; transition:transform 0.3s; }
-.wbottle.done .wbottle-icon { transform:scale(1.1); }
-.wbottle-num { font-size:15px; font-weight:700; font-family:'JetBrains Mono',monospace; }
-.wbottle.done .wbottle-num { color:var(--b); }
-.wbottle-time { font-size:9px; color:var(--t2); margin-top:2px; }
-.wbottle-lbl { font-size:8px; color:var(--t3); }
-
-.wstat {
-  text-align:center; margin-bottom:18px; padding:16px;
-  background:var(--card); border-radius:16px; border:1px solid var(--bdr);
-}
-.wstat-ml { font-size:44px; font-weight:800; font-family:'JetBrains Mono',monospace; }
-.wstat-ml small { font-size:16px; color:var(--t2); font-weight:400; }
-.wstat-sub { font-size:11px; color:var(--t2); margin-top:2px; }
-
-/* History */
-.chart-wrap {
-  background:var(--card); border-radius:14px; padding:14px;
-  border:1px solid var(--bdr); margin-bottom:14px;
-}
-.chart-legend { display:flex; justify-content:space-between; margin-bottom:10px; }
-.chart-legend span { font-size:10px; font-weight:600; }
-.chart-bars { display:flex; gap:2px; align-items:flex-end; height:110px; }
-.chart-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:0; }
-.chart-col-bars { width:100%; display:flex; gap:1px; align-items:flex-end; height:90px; }
-.chart-bar-t {
-  flex:1; border-radius:3px 3px 0 0; min-height:0; transition:height 0.4s;
-  background:linear-gradient(to top, #4ade8040, #4ade80);
-}
-.chart-bar-w {
-  flex:1; border-radius:3px 3px 0 0; min-height:0; transition:height 0.4s;
-  background:linear-gradient(to top, #38bdf840, #38bdf8);
-}
-.chart-day { font-size:7px; color:var(--t3); margin-top:4px; font-family:'JetBrains Mono',monospace; }
-
-.hist-row {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:10px 0; border-bottom:1px solid #111420;
-}
-.hist-date { font-size:13px; font-weight:600; }
-.hist-detail { font-size:10px; color:var(--t3); }
-.hist-score { font-size:14px; font-weight:700; font-family:'JetBrains Mono',monospace; }
-
-/* Period toggle */
-.period-toggle { display:flex; gap:4px; margin-bottom:14px; }
-.period-btn {
-  padding:5px 12px; border-radius:8px; font-size:11px; font-weight:600;
-  cursor:pointer; border:1px solid var(--bdr); background:none;
-  color:var(--t3); font-family:'Outfit',sans-serif; transition:all 0.2s;
-}
-.period-btn.act { background:var(--g)18; border-color:var(--g); color:var(--g); }
-
-/* Streak */
-.streak-card {
-  background: linear-gradient(135deg, #4ade8010, #38bdf810);
-  border:1px solid #4ade8025; border-radius:14px; padding:16px;
-  text-align:center; margin-bottom:14px;
-}
-.streak-num { font-size:36px; font-weight:800; color:var(--g); font-family:'JetBrains Mono',monospace; }
-.streak-lbl { font-size:11px; color:var(--t2); margin-top:2px; }
-
-/* Reset */
-.reset-btn {
-  display:block; margin:20px auto 0; padding:8px 20px; border-radius:8px;
-  font-size:11px; font-weight:600; cursor:pointer;
-  border:1px solid var(--r)40; background:var(--r)10; color:var(--r);
-  font-family:'Outfit',sans-serif;
-}
-
-/* Animations */
-@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-.fadein { animation: fadeIn 0.3s ease both; }
+.water-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:8px; padding:16px; }
+.bottle { background:var(--card); padding:15px; border-radius:12px; text-align:center; border:1px solid var(--bdr); }
+.bottle.done { border-color:var(--b); background:#38bdf810; }
 </style>
 </head>
 <body>
@@ -215,416 +67,87 @@ body {
   <div class="hdr">
     <div class="hdr-top">
       <div>
-        <div class="hdr-date" id="hdr-date"></div>
-        <div class="hdr-pct" id="hdr-pct">0%</div>
+        <div id="day-label" style="font-size:10px; color:var(--t2); text-transform:uppercase; letter-spacing:1px;"></div>
+        <div class="hdr-pct" id="pct-label">0%</div>
       </div>
-      <div class="hdr-stats">
-        <div class="hdr-stat">
-          <div class="hdr-stat-num" id="stat-tasks" style="color:var(--g)">0/0</div>
-          <div class="hdr-stat-lbl">Tasks</div>
-        </div>
-        <div class="hdr-stat">
-          <div class="hdr-stat-num" id="stat-water" style="color:var(--b)">0/9</div>
-          <div class="hdr-stat-lbl">Water</div>
-        </div>
+      <div style="text-align:right">
+         <div id="task-count" style="font-size:12px; font-weight:700;">0/0</div>
+         <div style="font-size:8px; color:var(--t2);">COMPLETED</div>
       </div>
     </div>
-    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
   </div>
 
-  <div class="view act" id="v-today"></div>
-  <div class="view" id="v-water"></div>
-  <div class="view" id="v-history"></div>
+  <div id="today-view" class="view act"></div>
+  
+  <div id="water-view" class="view">
+    <div class="water-grid" id="water-grid"></div>
+  </div>
 </div>
 
 <nav class="bnav">
-  <button class="bnav-btn act" onclick="switchView('today')"><span>⏰</span>Today</button>
-  <button class="bnav-btn" onclick="switchView('water')"><span>💧</span>Water</button>
-  <button class="bnav-btn" onclick="switchView('history')"><span>📊</span>History</button>
+  <button class="bnav-btn act" onclick="switchView('today')">ROUTINE</button>
+  <button class="bnav-btn" onclick="switchView('water')">WATER</button>
 </nav>
 
 <script>
-// ===== DATA ENGINE =====
-const STORE_PREFIX = "ht_";
+const state = JSON.parse(localStorage.getItem('prash_health_v2')) || { completed: {}, water: {} };
 const now = new Date();
-const todayStr = dateKey(now);
+const isWeekend = now.getDay() === 5 || now.getDay() === 6; // Fri-Sat
 
-function dateKey(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const routine = [
+  { id: 'supp1', time: isWeekend ? "09:00" : "06:50", title: "Glutathione + Ashwagandha", sub: "Empty stomach. Cool water only.", priority: "must", cat: "supp" },
+  { id: 'skin1', time: isWeekend ? "09:15" : "06:55", title: "Face Wash + Sunscreen", sub: "Basic AM protection.", priority: "must", cat: "skin" },
+  { id: 'food1', time: isWeekend ? "10:00" : "07:15", title: "Breakfast + Fish Oil + Collagen", sub: "Needs fats to absorb. No hot water for collagen.", priority: "must", cat: "food" },
+  { id: 'supp2', time: "13:30", title: "Magnesium+", sub: "Post-lunch focus and muscle support.", priority: "opt", cat: "supp" },
+  { id: 'workout', time: "19:00", title: "Bodyweight Session", sub: "Only 4x/week. Electrolytes during.", priority: "opt", cat: "workout" },
+  { id: 'food2', time: "20:30", title: "Dinner", sub: "High protein. Finish by 21:30.", priority: "must", cat: "food" },
+  { id: 'skin2', time: "22:30", title: "Night Skin Wash", sub: "Crucial to clear Riyadh dust/sunscreen.", priority: "must", cat: "skin" }
+];
+
+function save() { localStorage.setItem('prash_health_v2', JSON.stringify(state)); }
+
+function render() {
+  const todayDiv = document.getElementById('today-view');
+  todayDiv.innerHTML = routine.map(item => {
+    const isDone = state.completed[item.id];
+    return `
+      <div class="task ${isDone ? 'done' : ''}" onclick="toggle('${item.id}')">
+        <div class="chk">${isDone ? '✓' : ''}</div>
+        <div class="task-body">
+          <div class="task-meta">
+            <span class="time-tag">${item.time}</span>
+            <span class="priority-tag ${item.priority}">${item.priority}</span>
+          </div>
+          <div class="task-title">${item.title}</div>
+          <div class="task-sub">${item.sub}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const doneCount = Object.values(state.completed).filter(Boolean).length;
+  const pct = Math.round((doneCount / routine.length) * 100);
+  document.getElementById('pct-label').textContent = pct + "%";
+  document.getElementById('prog-fill').style.width = pct + "%";
+  document.getElementById('task-count').textContent = `${doneCount}/${routine.length}`;
+  document.getElementById('day-label').textContent = isWeekend ? "Weekend Mode" : "Workday Mode";
 }
 
-function isWorkday(d) { const day = d.getDay(); return day >= 0 && day <= 4; }
-function isWorkoutDay(d) { return [0,2,3,6].includes(d.getDay()); }
-
-function getDayData(key) {
-  try { return JSON.parse(localStorage.getItem(STORE_PREFIX + key)) || {}; } catch(e) { return {}; }
-}
-function setDayData(key, data) {
-  localStorage.setItem(STORE_PREFIX + key, JSON.stringify(data));
-  updateHistoryKeys(key);
-}
-function updateHistoryKeys(key) {
-  let keys = [];
-  try { keys = JSON.parse(localStorage.getItem(STORE_PREFIX + "keys")) || []; } catch(e) {}
-  if (!keys.includes(key)) keys.push(key);
-  if (keys.length > 120) keys = keys.slice(-120);
-  localStorage.setItem(STORE_PREFIX + "keys", JSON.stringify(keys));
-}
-function getHistoryKeys() {
-  try { return JSON.parse(localStorage.getItem(STORE_PREFIX + "keys")) || []; } catch(e) { return []; }
-}
-
-// ===== TASK GENERATION =====
-function buildItems(d) {
-  const work = isWorkday(d);
-  const workout = isWorkoutDay(d);
-  const dow = d.getDay();
-  const items = [];
-
-  const wt = work ? "6:50" : "9:00";
-  const wl = work ? "6:50 AM" : "9:00 AM";
-
-  items.push({id:"wake",time:wt,label:wl,title:"Plain water + Glutathione + Ashwagandha",sub:"Cool water only. Swallow Ashwagandha with it.",cat:"supp",icon:"💊"});
-  items.push({id:"skin-am-1",time:work?"6:55":"9:05",label:work?"6:55 AM":"9:05 AM",title:"Face wash",sub:"Lukewarm, 30s circular, pat dry (clean towel)",cat:"skin",icon:"✨"});
-  items.push({id:"skin-am-2",time:work?"6:56":"9:06",label:"",title:"Moisturizer on damp skin",sub:"Thin layer, include neck. Wait 1 min.",cat:"skin",icon:"✨"});
-  items.push({id:"skin-am-3",time:work?"6:58":"9:08",label:"",title:"Sunscreen SPF 50+",sub:"2 finger-lengths, face+neck. Even indoors.",cat:"skin",icon:"☀️"});
-
-  if (dow === 2) items.push({id:"hair-tue",time:work?"6:55":"9:05",label:"",title:"Shampoo (Tue wash day)",sub:"Massage scalp 1-2 min",cat:"hair",icon:"💇"});
-  if (dow === 6) items.push({id:"hair-sat",time:"9:10",label:"9:10 AM",title:"Shampoo — wash out oil",sub:"Friday night oil wash-out. Scalp massage.",cat:"hair",icon:"💇"});
-
-  const bt = work ? "7:10" : (workout ? "11:00" : "10:00");
-  const bl = work ? "7:10 AM" : (workout ? "11:00 AM" : "10:00 AM");
-  items.push({id:"bfast",time:bt,label:bl,title:"Breakfast + Fish Oil + Collagen",sub:"2 eggs + banana min. Collagen in cool water.",cat:"supp",icon:"🍳"});
-
-  if (dow === 0) items.push({id:"vitd",time:"12:30",label:"12:30 PM",title:"Vitamin D3 60K IU (Sunday)",sub:"Weekly shot with fatty meal",cat:"supp",icon:"☀️"});
-
-  if (work) {
-    items.push({id:"lunch",time:"12:30",label:"12:30 PM",title:"Lunch — chicken + rice + veg",sub:"Add fiber: cucumber, tomato, salad",cat:"food",icon:"🍚"});
-    items.push({id:"mag",time:"13:30",label:"1:30 PM",title:"Magnesium+ effervescent",sub:"Dissolve in water bottle",cat:"supp",icon:"🟣"});
-    items.push({id:"snack",time:"15:30",label:"3:30 PM",title:"Snack — apple / nuts",sub:"Keep almonds at desk",cat:"food",icon:"🍎"});
-  } else {
-    items.push({id:"mag",time:"12:30",label:"12:30 PM",title:"Magnesium+ effervescent",sub:"Post-meal in water",cat:"supp",icon:"🟣"});
-  }
-
-  if (workout) {
-    const wkt = work ? "19:00" : "10:00";
-    const wkl = work ? "7:00 PM" : "10:00 AM";
-    const isA = [0,3].includes(dow);
-    items.push({id:"workout",time:wkt,label:wkl,title:isA?"Workout — Push + Core (Day A)":"Workout — Pull + Legs (Day B)",sub:"30-45 min bodyweight",cat:"workout",icon:"💪"});
-    items.push({id:"electro",time:wkt,label:"",title:"Electrolyte during workout",sub:"Supply6 Salts in water bottle",cat:"supp",icon:"🧂"});
-    items.push({id:"whey",time:work?"19:45":"10:45",label:work?"7:45 PM":"10:45 AM",title:"Whey protein shake",sub:"1 scoop within 30 min post-workout",cat:"supp",icon:"🥤"});
-  }
-
-  const dt = work ? "20:30" : "17:30";
-  const dl = work ? "8:30 PM" : "5:30 PM";
-  items.push({id:"dinner",time:dt,label:dl,title:"Dinner — by 9:30 PM max",sub:"Shawarma (tahini>mayo) / eggs / prawns + veg",cat:"food",icon:"🌮"});
-
-  items.push({id:"skin-pm-1",time:"22:30",label:"10:30 PM",title:"Night face wash",sub:"Most important wash. Removes all day's grime.",cat:"skin",icon:"🌙"});
-  items.push({id:"skin-pm-2",time:"22:32",label:"",title:"Night cream / moisturizer",sub:"Generous layer. Under-eyes, neck.",cat:"skin",icon:"🌙"});
-  items.push({id:"body-m",time:"22:33",label:"",title:"Body moisturizer after shower",sub:"While skin damp. Arms, legs, torso.",cat:"skin",icon:"🧴"});
-
-  if (dow === 5) items.push({id:"hair-oil",time:"22:35",label:"10:35 PM",title:"Hair oil — Friday night",sub:"Coconut/almond oil, massage 5 min, sleep with it",cat:"hair",icon:"💇"});
-
-  items.push({id:"phone",time:"22:30",label:"10:30 PM",title:"Phone down",sub:"Charger across room",cat:"sleep",icon:"📱"});
-  items.push({id:"sleep",time:dow===5?"00:30":"23:30",label:dow===5?"12:30 AM":"11:30 PM",title:"Lights out",sub:`AC 22-23°C. ${dow===5?"Friday flex.":"7.5h target."}`,cat:"sleep",icon:"😴"});
-
-  return items;
-}
-
-function getWaterBottles(work) {
-  if (work) return [
-    {id:1,time:"7:00 AM",lbl:"Wake+supps"},{id:2,time:"9:00 AM",lbl:"Office"},
-    {id:3,time:"11:00 AM",lbl:"Pre-lunch"},{id:4,time:"12:30 PM",lbl:"Lunch"},
-    {id:5,time:"1:30 PM",lbl:"Magnesium+"},{id:6,time:"3:30 PM",lbl:"Snack"},
-    {id:7,time:"6:00 PM",lbl:"Workout"},{id:8,time:"8:30 PM",lbl:"Dinner"},
-    {id:9,time:"10:00 PM",lbl:"Night"}
-  ];
-  return [
-    {id:1,time:"9:00 AM",lbl:"Wake"},{id:2,time:"10:00 AM",lbl:"Workout"},
-    {id:3,time:"11:00 AM",lbl:"Brunch"},{id:4,time:"12:30 PM",lbl:"Post-meal"},
-    {id:5,time:"2:00 PM",lbl:"Afternoon"},{id:6,time:"4:00 PM",lbl:"Afternoon"},
-    {id:7,time:"5:30 PM",lbl:"Dinner"},{id:8,time:"8:00 PM",lbl:"Evening"},
-    {id:9,time:"10:00 PM",lbl:"Night"}
-  ];
-}
-
-const CAT_COLORS = {
-  supp:{bg:"#4ade8018",bdr:"#4ade80",txt:"#4ade80"},
-  skin:{bg:"#e879f918",bdr:"#e879f9",txt:"#e879f9"},
-  hair:{bg:"#f59e0b18",bdr:"#f59e0b",txt:"#f59e0b"},
-  food:{bg:"#38bdf818",bdr:"#38bdf8",txt:"#38bdf8"},
-  workout:{bg:"#fb718518",bdr:"#fb7185",txt:"#fb7185"},
-  sleep:{bg:"#a78bfa18",bdr:"#a78bfa",txt:"#a78bfa"}
-};
-const CAT_NAMES = {supp:"Supplement",skin:"Skin",hair:"Hair",food:"Food",workout:"Workout",sleep:"Sleep"};
-
-// ===== STATE =====
-const items = buildItems(now);
-const bottles = getWaterBottles(isWorkday(now));
-let data = getDayData(todayStr);
-if (!data.completed) data.completed = {};
-if (!data.water) data.water = {};
-data.totalItems = items.length;
-
-function saveData() { setDayData(todayStr, data); }
-
-// ===== RENDER ENGINE =====
-const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-const dayShort = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-function updateHeader() {
-  const tasksDone = Object.values(data.completed).filter(Boolean).length;
-  const waterDone = Object.values(data.water).filter(Boolean).length;
-  const total = items.length + 9;
-  const pct = Math.round(((tasksDone + waterDone) / total) * 100);
-
-  document.getElementById('hdr-date').textContent = `${dayNames[now.getDay()]} · ${now.getDate()} ${monthNames[now.getMonth()]}`;
-  document.getElementById('hdr-pct').textContent = `${pct}% Complete`;
-  document.getElementById('hdr-pct').style.color = pct === 100 ? '#4ade80' : pct >= 70 ? '#4ade80' : pct >= 40 ? '#f59e0b' : '#ef4444';
-  document.getElementById('stat-tasks').textContent = `${tasksDone}/${items.length}`;
-  document.getElementById('stat-water').textContent = `${waterDone}/9`;
-
-  const fill = document.getElementById('prog-fill');
-  fill.style.width = `${pct}%`;
-  fill.style.background = pct === 100 ? '#4ade80' : 'linear-gradient(90deg, #4ade80, #38bdf8)';
-}
-
-function isOverdue(timeStr) {
-  if (!timeStr) return false;
-  const [h, m] = timeStr.split(':').map(Number);
-  const nowMins = now.getHours() * 60 + now.getMinutes();
-  const itemMins = h * 60 + m;
-  return nowMins > itemMins + 30;
-}
-
-function renderToday() {
-  const work = isWorkday(now);
-  const workout = isWorkoutDay(now);
-  let html = `<div class="slbl fadein">`;
-  html += work ? '☀️ Workday · Sun–Thu' : '🏖️ Weekend · Fri–Sat';
-  html += workout ? ' · 💪 Workout day' : ' · 🚶 Rest day';
-  html += '</div>';
-
-  items.forEach((item, i) => {
-    const done = data.completed[item.id];
-    const overdue = !done && isOverdue(item.time);
-    const cc = CAT_COLORS[item.cat];
-    html += `<div class="task ${done?'done':''} ${overdue?'overdue':''} fadein" style="animation-delay:${i*20}ms" onclick="toggleTask('${item.id}')">`;
-    html += `<div class="chk" style="${done?`border-color:${cc.bdr};background:${cc.bg};color:${cc.txt}`:''}${overdue&&!done?'border-color:var(--r)':''}">${done?'✓':''}</div>`;
-    html += `<div class="task-body">`;
-    html += `<div class="task-meta">`;
-    if (item.label) html += `<span class="task-time">${item.label}</span>`;
-    html += `<span class="task-cat" style="background:${cc.bg};color:${cc.txt}">${CAT_NAMES[item.cat]}</span>`;
-    if (overdue) html += `<span class="task-cat" style="background:#ef444418;color:var(--r)">OVERDUE</span>`;
-    html += `</div>`;
-    html += `<div class="task-title">${item.icon} ${item.title}</div>`;
-    html += `<div class="task-sub">${item.sub}</div>`;
-    html += `</div></div>`;
-  });
-
-  document.getElementById('v-today').innerHTML = html;
-}
-
-function renderWater() {
-  const waterDone = Object.values(data.water).filter(Boolean).length;
-  const ml = waterDone * 330;
-  const hit = waterDone === 9;
-
-  let html = `<div class="wstat fadein">`;
-  html += `<div class="wstat-ml" style="color:${hit?'var(--g)':'var(--b)'}">${ml.toLocaleString()}<small>ml</small></div>`;
-  html += `<div class="wstat-sub">${waterDone}/9 bottles · Target 2,970ml</div>`;
-  if (hit) html += `<div style="margin-top:6px;font-size:13px;color:var(--g);font-weight:600">✅ Target hit!</div>`;
-  html += `</div>`;
-
-  html += `<div class="wgrid">`;
-  bottles.forEach((b, i) => {
-    const done = data.water[b.id];
-    html += `<div class="wbottle ${done?'done':''} fadein" style="animation-delay:${i*30}ms" onclick="toggleWater(${b.id})">`;
-    html += `<div class="wbottle-icon">${done?'✅':'💧'}</div>`;
-    html += `<div class="wbottle-num">#${b.id}</div>`;
-    html += `<div class="wbottle-time">${b.time}</div>`;
-    html += `<div class="wbottle-lbl">${b.lbl}</div>`;
-    html += `</div>`;
-  });
-  html += `</div>`;
-
-  html += `<div style="margin-top:16px;background:var(--card);border-radius:12px;padding:13px;border:1px solid var(--bdr)">`;
-  html += `<div style="font-size:11px;font-weight:600;color:var(--o);margin-bottom:5px">⚡ Rules</div>`;
-  html += `<div style="font-size:10px;color:var(--t2);line-height:1.8">`;
-  html += `Spread bottles — don't chug 3 at once<br>`;
-  html += `Stop by 10:30 PM<br>`;
-  html += `Dark urine = dehydrated → drink now<br>`;
-  html += `Electrolyte replaces a bottle (not extra)<br>`;
-  html += `Workout day: add bottle #10</div></div>`;
-
-  document.getElementById('v-water').innerHTML = html;
-}
-
-function renderHistory() {
-  const keys = getHistoryKeys();
-  const allHist = [];
-  keys.forEach(k => {
-    const d = getDayData(k);
-    if (d.totalItems) {
-      const tasksDone = Object.values(d.completed || {}).filter(Boolean).length;
-      const waterDone = Object.values(d.water || {}).filter(Boolean).length;
-      allHist.push({
-        date: k,
-        tasks: Math.round((tasksDone / d.totalItems) * 100),
-        water: Math.round((waterDone / 9) * 100)
-      });
-    }
-  });
-
-  // Include today
-  const tasksDoneToday = Object.values(data.completed).filter(Boolean).length;
-  const waterDoneToday = Object.values(data.water).filter(Boolean).length;
-  const todayEntry = { date: todayStr, tasks: Math.round((tasksDoneToday / items.length) * 100), water: Math.round((waterDoneToday / 9) * 100) };
-  const existsIdx = allHist.findIndex(h => h.date === todayStr);
-  if (existsIdx >= 0) allHist[existsIdx] = todayEntry;
-  else allHist.push(todayEntry);
-
-  // Streak
-  let streak = 0;
-  for (let i = allHist.length - 1; i >= 0; i--) {
-    const avg = (allHist[i].tasks + allHist[i].water) / 2;
-    if (avg >= 50) streak++;
-    else break;
-  }
-
-  let html = '';
-
-  // Streak card
-  html += `<div class="streak-card fadein">`;
-  html += `<div class="streak-num">${streak}</div>`;
-  html += `<div class="streak-lbl">${streak === 1 ? 'day' : 'days'} streak · 50%+ completion</div>`;
-  html += `</div>`;
-
-  if (allHist.length === 0) {
-    html += `<div style="text-align:center;padding:40px;color:var(--t3)">`;
-    html += `<div style="font-size:32px;margin-bottom:8px">📊</div>`;
-    html += `<div style="font-size:13px">Complete today's tasks to start tracking!</div></div>`;
-    document.getElementById('v-history').innerHTML = html;
-    return;
-  }
-
-  // Chart — last 14 days
-  const chartData = allHist.slice(-14);
-  html += `<div class="chart-wrap fadein">`;
-  html += `<div class="chart-legend"><span style="color:var(--g)">● Tasks</span><span style="color:var(--b)">● Water</span></div>`;
-  html += `<div class="chart-bars">`;
-  chartData.forEach(h => {
-    const dd = new Date(h.date + 'T12:00:00');
-    html += `<div class="chart-col">`;
-    html += `<div class="chart-col-bars">`;
-    html += `<div class="chart-bar-t" style="height:${h.tasks}%"></div>`;
-    html += `<div class="chart-bar-w" style="height:${h.water}%"></div>`;
-    html += `</div>`;
-    html += `<div class="chart-day">${h.date.slice(8)}</div>`;
-    html += `</div>`;
-  });
-  html += `</div></div>`;
-
-  // Monthly summary
-  const months = {};
-  allHist.forEach(h => {
-    const mk = h.date.slice(0, 7);
-    if (!months[mk]) months[mk] = { tasks: [], water: [] };
-    months[mk].tasks.push(h.tasks);
-    months[mk].water.push(h.water);
-  });
-
-  const monthKeys = Object.keys(months).sort().reverse();
-  if (monthKeys.length > 0) {
-    html += `<div class="slbl" style="margin-top:14px">Monthly Averages</div>`;
-    monthKeys.forEach(mk => {
-      const m = months[mk];
-      const avgT = Math.round(m.tasks.reduce((a,b)=>a+b,0) / m.tasks.length);
-      const avgW = Math.round(m.water.reduce((a,b)=>a+b,0) / m.water.length);
-      const avg = Math.round((avgT + avgW) / 2);
-      const [y, mo] = mk.split('-');
-      const mName = monthNames[parseInt(mo) - 1];
-      html += `<div class="hist-row">`;
-      html += `<div><div class="hist-date">${mName} ${y}</div>`;
-      html += `<div class="hist-detail">Tasks ${avgT}% · Water ${avgW}% · ${m.tasks.length} days tracked</div></div>`;
-      html += `<div class="hist-score" style="color:${avg>=80?'var(--g)':avg>=50?'var(--o)':'var(--r)'}">${avg}%</div>`;
-      html += `</div>`;
-    });
-  }
-
-  // Daily log
-  html += `<div class="slbl" style="margin-top:14px">Daily Log</div>`;
-  [...allHist].reverse().slice(0, 30).forEach(h => {
-    const dd = new Date(h.date + 'T12:00:00');
-    const dn = dayShort[dd.getDay()];
-    const avg = Math.round((h.tasks + h.water) / 2);
-    const isToday = h.date === todayStr;
-    html += `<div class="hist-row">`;
-    html += `<div><div class="hist-date">${isToday ? '📍 Today' : dn + ' ' + h.date.slice(5)}</div>`;
-    html += `<div class="hist-detail">Tasks ${h.tasks}% · Water ${h.water}%</div></div>`;
-    html += `<div class="hist-score" style="color:${avg>=80?'var(--g)':avg>=50?'var(--o)':'var(--r)'}">${avg}%</div>`;
-    html += `</div>`;
-  });
-
-  // Reset
-  html += `<button class="reset-btn" onclick="resetToday()">↻ Reset Today</button>`;
-
-  document.getElementById('v-history').innerHTML = html;
-}
-
-// ===== INTERACTIONS =====
-function toggleTask(id) {
-  data.completed[id] = !data.completed[id];
-  saveData();
-  renderToday();
-  updateHeader();
-  // Haptic feedback
-  if (navigator.vibrate) navigator.vibrate(10);
-}
-
-function toggleWater(id) {
-  data.water[id] = !data.water[id];
-  saveData();
-  renderWater();
-  updateHeader();
-  if (navigator.vibrate) navigator.vibrate(10);
-}
-
-function resetToday() {
-  if (confirm('Reset all tasks and water for today?')) {
-    data.completed = {};
-    data.water = {};
-    saveData();
-    renderToday();
-    renderWater();
-    renderHistory();
-    updateHeader();
-  }
+function toggle(id) {
+  state.completed[id] = !state.completed[id];
+  save();
+  render();
 }
 
 function switchView(v) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('act'));
   document.querySelectorAll('.bnav-btn').forEach(el => el.classList.remove('act'));
-  document.getElementById('v-' + v).classList.add('act');
-  document.querySelectorAll('.bnav-btn')[['today','water','history'].indexOf(v)].classList.add('act');
-
-  if (v === 'today') renderToday();
-  if (v === 'water') renderWater();
-  if (v === 'history') renderHistory();
+  document.getElementById(v + '-view').classList.add('act');
+  event.target.classList.add('act');
 }
 
-// ===== INIT =====
-updateHeader();
-renderToday();
-renderWater();
-
-// Auto-refresh overdue status every minute
-setInterval(() => {
-  if (document.getElementById('v-today').classList.contains('act')) {
-    renderToday();
-  }
-}, 60000);
+render();
 </script>
 </body>
 </html>
